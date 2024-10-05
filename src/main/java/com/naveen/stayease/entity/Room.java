@@ -1,7 +1,6 @@
 package com.naveen.stayease.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,10 +22,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Room name cannot be empty")
     private String name;
 
-    @NotEmpty(message = "description cannot be empty")
     private String description;
 
     @ManyToOne
