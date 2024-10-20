@@ -30,18 +30,34 @@ public class UserService implements IUserService {
         this.compromisedPasswordChecker = compromisedPasswordChecker;
     }
 
+    /**
+     * Checks if the password is compromised and encrypts it before saving.
+     * Assign default role, if user didn't choose.
+     * @param registerRequest request body of the registration
+     * @return response
+     */
     public RegisterResponse register(RegisterRequest registerRequest){
+        //check if password is compromised and encrypt it
         isPasswordCompromised(registerRequest.getPassword());
         registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        //set role if user didn't send
         if(registerRequest.getRole()==null || registerRequest.getRole().name().isEmpty()){
             registerRequest.setRole(Role.USER);
         }
+
+        //save the user
         User user = repository.save(modelMapper.map(registerRequest, User.class));
 
+        //return the response
         return modelMapper.map(user, RegisterResponse.class);
     }
 
 
+    /**
+     * checks if the password is compromised using compromisedPasswordChecker
+     * @param password user password
+     */
     private void isPasswordCompromised(String password){
         CompromisedPasswordDecision decision = compromisedPasswordChecker.check(password);
         if (decision.isCompromised()) {
