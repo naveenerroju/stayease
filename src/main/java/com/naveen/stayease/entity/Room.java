@@ -26,6 +26,8 @@ public class Room {
 
     private String description;
 
+    private int totalNumberOfRooms;
+
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
