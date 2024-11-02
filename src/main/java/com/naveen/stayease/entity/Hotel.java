@@ -1,7 +1,7 @@
 package com.naveen.stayease.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,15 +19,16 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "hotel name cannot be empty")
     private String name;
 
-    @NotEmpty(message = "location cannot be empty")
-    private String location;
+    private Double[] location;
 
-    @NotEmpty(message = "description name cannot be empty")
     private String description;
 
+    private boolean availability;
+
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Room> rooms;
+
 }
