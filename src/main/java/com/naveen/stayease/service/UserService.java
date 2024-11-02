@@ -15,6 +15,9 @@ import org.springframework.security.authentication.password.CompromisedPasswordE
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -81,5 +84,16 @@ public class UserService implements IUserService {
         } else {
             return "Unauthenticated";
         }
+    }
+
+    public User getUserUsingToken(String token){
+        String email = jwtService.extractUserName(token);
+        Optional<User> user = repository.findByEmail(email);
+        Assert.isTrue(user.isPresent(), "User not found with id: " + email);
+        return user.get();
+    }
+
+    public boolean validateUser(User user, String email){
+        return user.getEmail().equals(email);
     }
 }
