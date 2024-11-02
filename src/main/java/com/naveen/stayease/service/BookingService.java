@@ -1,10 +1,12 @@
 package com.naveen.stayease.service;
 
+import com.naveen.stayease.dto.BookingDetails;
 import com.naveen.stayease.dto.BookingRequest;
 import com.naveen.stayease.entity.Booking;
 import com.naveen.stayease.entity.Room;
 import com.naveen.stayease.entity.User;
 import com.naveen.stayease.exception.InvalidInputException;
+import com.naveen.stayease.exception.ValidationException;
 import com.naveen.stayease.repository.BookingRepository;
 import com.naveen.stayease.repository.RoomRepository;
 import com.naveen.stayease.repository.UserRepository;
@@ -13,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BookingService implements IBookingService{
@@ -28,7 +32,7 @@ public class BookingService implements IBookingService{
 
     @Override
     @Transactional
-    public Booking bookRoom(User user, BookingRequest bookingRequest) {
+    public BookingDetails bookRoom(User user, BookingRequest bookingRequest) {
 
         Optional<Room> room = roomRepository.findById(bookingRequest.getRoomId());
         if(room.isEmpty()){
@@ -43,11 +47,42 @@ public class BookingService implements IBookingService{
         booking.setUser(user);
         booking.setBookingDate(bookingRequest.getBookingDate());
 
-        return bookingRepository.save(booking);
+        Booking bookingResponse  = bookingRepository.save(booking);
+        return generateBookingDetails(bookingResponse);
+    }
+
+    public List<BookingDetails> getAllBookings(User user){
+        List<BookingDetails> bookingDetails = new ArrayList<>();
+        for (Booking booking: user.getBookings()){
+            bookingDetails.add(generateBookingDetails(booking));
+        }
+        if(bookingDetails.isEmpty()){
+            throw new ValidationException("You do not have any bookings yet");
+        }
+        return bookingDetails;
     }
 
     @Override
-    public void cancelBooking(User user, long bookingId) {
+    @Transactional
+    public void cancelBooking(User user, UUID bookingId) {
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
+        if(booking.isEmpty() || !booking.get().getUser().getEmail().equals(user.getEmail())){
+            throw new InvalidInputException("Booking Id is invalid");
+        }
 
+        if(booking.get().getBookingDate().isBefore(LocalDate.now())){
+            throw new ValidationException("This booking is fulfilled");
+        }
+
+        bookingRepository.delete(booking.get());
+    }
+
+    private BookingDetails generateBookingDetails(Booking bookingResponse){
+        return new BookingDetails(bookingResponse.getBookingId(),
+                bookingResponse.getRoom().getHotel().getId(),
+                bookingResponse.getRoom().getHotel().getName(),
+                bookingResponse.getRoom().getId(),
+                bookingResponse.getRoom().getName(),
+                bookingResponse.getBookingDate());
     }
 }

@@ -1,13 +1,12 @@
 package com.naveen.stayease.service;
 
+import com.naveen.stayease.dto.BookingDetails;
 import com.naveen.stayease.dto.BookingRequest;
-import com.naveen.stayease.entity.Booking;
 import com.naveen.stayease.entity.User;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.util.UUID;
 
 public interface IBookingService {
-    Booking bookRoom(User user, BookingRequest bookingRequest);
-    void cancelBooking(User user, long bookingId);
+    BookingDetails bookRoom(User user, BookingRequest bookingRequest);
+    void cancelBooking(User user, UUID bookingId);
 }

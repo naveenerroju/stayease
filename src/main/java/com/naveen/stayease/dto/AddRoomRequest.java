@@ -19,7 +19,7 @@ public class AddRoomRequest {
     private String description;
     @NotNull(message = "room hotel id cannot be empty")
     private long hotel;
-    @NotBlank(message = "total number of room cannot be empty")
+    @NotNull(message = "total number of room cannot be empty")
     @Min(value = 1, message = "at least 1 room should be there of this type")
     private int totalNumberOfRooms;
 }

@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest){
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest){
         String token = userService.verify(loginRequest);
         return new LoginResponse(token);
     }

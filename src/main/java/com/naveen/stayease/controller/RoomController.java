@@ -3,6 +3,7 @@ package com.naveen.stayease.controller;
 import com.naveen.stayease.dto.AddRoomRequest;
 import com.naveen.stayease.entity.Room;
 import com.naveen.stayease.service.RoomService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +20,7 @@ public class RoomController {
     private RoomService service;
 
     @PostMapping()
-    public ResponseEntity<Room> addRoom(@RequestBody AddRoomRequest roomRequest){
+    public ResponseEntity<Room> addRoom(@Valid @RequestBody AddRoomRequest roomRequest){
         Room room = service.addRoom(roomRequest);
         return ResponseEntity.ok(room);
     }
