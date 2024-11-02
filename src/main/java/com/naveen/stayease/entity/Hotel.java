@@ -20,9 +20,11 @@ public class Hotel {
 
     private String name;
 
-    private String location;
+    private Double[] location;
 
     private String description;
+
+    private boolean availability;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms;
