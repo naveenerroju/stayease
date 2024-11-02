@@ -34,4 +34,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<Error> handleInvalidInputException(InvalidInputException ex){
+        return ResponseEntity.badRequest().body(new Error("INVALID_INPUT_PROVIDED",ex.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Error> handleValidationException(ValidationException ex){
+        return ResponseEntity.badRequest().body(new Error("VALIDATION_EXCEPTION",ex.getMessage()));
+    }
+
 }
