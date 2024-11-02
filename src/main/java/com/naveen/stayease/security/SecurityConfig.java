@@ -3,6 +3,7 @@ package com.naveen.stayease.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,6 +35,7 @@ public class SecurityConfig {
         return http.csrf(csrfConfig -> csrfConfig.disable()).
         authorizeHttpRequests(request -> request
                 .requestMatchers("user/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "hotel/**").permitAll()
                 .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
