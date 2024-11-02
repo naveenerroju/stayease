@@ -1,4 +1,4 @@
-package com.naveen.stayease.service.templates;
+package com.naveen.stayease.service;
 
 import com.naveen.stayease.dto.RegisterRequest;
 import com.naveen.stayease.dto.RegisterResponse;

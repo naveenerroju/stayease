@@ -1,5 +1,7 @@
 package com.naveen.stayease.controller;
 
+import com.naveen.stayease.dto.LoginRequest;
+import com.naveen.stayease.dto.LoginResponse;
 import com.naveen.stayease.dto.RegisterRequest;
 import com.naveen.stayease.dto.RegisterResponse;
 import com.naveen.stayease.service.UserService;
@@ -26,6 +28,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest){
         return new ResponseEntity<>(userService.register(registerRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest loginRequest){
+        String token = userService.verify(loginRequest);
+        return new LoginResponse(token);
     }
 
 }

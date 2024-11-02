@@ -1,15 +1,18 @@
 package com.naveen.stayease.service;
 
+import com.naveen.stayease.dto.LoginRequest;
 import com.naveen.stayease.dto.RegisterRequest;
 import com.naveen.stayease.dto.RegisterResponse;
 import com.naveen.stayease.entity.User;
 import com.naveen.stayease.model.Role;
 import com.naveen.stayease.repository.UserRepository;
-import com.naveen.stayease.service.templates.IUserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.authentication.password.CompromisedPasswordDecision;
 import org.springframework.security.authentication.password.CompromisedPasswordException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +27,16 @@ public class UserService implements IUserService {
 
     private final CompromisedPasswordChecker compromisedPasswordChecker;
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, CompromisedPasswordChecker compromisedPasswordChecker) {
+    private final AuthenticationManager authManager;
+
+    private final JWTService jwtService;
+
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, CompromisedPasswordChecker compromisedPasswordChecker, AuthenticationManager authManager, JWTService jwtService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.compromisedPasswordChecker = compromisedPasswordChecker;
+        this.authManager = authManager;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -62,6 +71,15 @@ public class UserService implements IUserService {
         CompromisedPasswordDecision decision = compromisedPasswordChecker.check(password);
         if (decision.isCompromised()) {
             throw new CompromisedPasswordException("The provided password is compromised and cannot be used.");
+        }
+    }
+
+    public String verify(LoginRequest loginRequest) {
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(loginRequest.getEmail());
+        } else {
+            return "Unauthenticated";
         }
     }
 }
