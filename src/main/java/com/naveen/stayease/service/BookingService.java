@@ -34,14 +34,15 @@ public class BookingService implements IBookingService{
     @Override
     @Transactional
     public BookingDetails bookRoom(User user, BookingRequest bookingRequest) {
+        if(bookingRequest.getBookingDate().isBefore(LocalDate.now())){
+            throw new InvalidInputException("Booking date is not valid.");
+        }
 
         Optional<Room> room = roomRepository.findById(bookingRequest.getRoomId());
         if(room.isEmpty()){
             throw new InvalidInputException("Room doesn't exist with roomId "+bookingRequest.getRoomId());
         }
-        if(bookingRequest.getBookingDate().isBefore(LocalDate.now())){
-            throw new InvalidInputException("Booking date is not valid.");
-        }
+
         //check if the room is available on requested date
         if(RoomAvailabilityUtil.numberOfAvailableRooms(room.get(), bookingRequest.getBookingDate())<1){
             throw new InvalidInputException("The requested room is not available on the requested date. Please choose any available rooms.");
