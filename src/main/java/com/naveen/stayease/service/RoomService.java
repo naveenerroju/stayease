@@ -9,7 +9,6 @@ import com.naveen.stayease.repository.HotelRepository;
 import com.naveen.stayease.repository.RoomRepository;
 import com.naveen.stayease.util.RoomAvailabilityUtil;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,11 +18,14 @@ import java.util.Optional;
 
 @Service
 public class RoomService implements IRoomService{
-    @Autowired
-    private RoomRepository roomRepository;
-    @Autowired
-    private HotelRepository hotelRepository;
+    private final RoomRepository roomRepository;
+    private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper = new ModelMapper();
+
+    public RoomService(RoomRepository roomRepository, HotelRepository hotelRepository) {
+        this.roomRepository = roomRepository;
+        this.hotelRepository = hotelRepository;
+    }
 
     @Override
     public Room addRoom(AddRoomRequest roomRequest) {

@@ -4,7 +4,6 @@ import com.naveen.stayease.dto.AddHotelRequest;
 import com.naveen.stayease.entity.Hotel;
 import com.naveen.stayease.exception.InvalidInputException;
 import com.naveen.stayease.repository.HotelRepository;
-import com.naveen.stayease.repository.RoomRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,8 +24,6 @@ class HotelServiceTest {
     @Mock
     private HotelRepository hotelRepository;
 
-    @Mock
-    private RoomRepository roomRepository;
 
     @InjectMocks
     private HotelService hotelService;
@@ -35,7 +32,7 @@ class HotelServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        hotelService = new HotelService(hotelRepository, roomRepository);
+        hotelService = new HotelService(hotelRepository);
     }
 
     @Test

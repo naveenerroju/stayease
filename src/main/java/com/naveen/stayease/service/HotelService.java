@@ -1,19 +1,12 @@
 package com.naveen.stayease.service;
 
 import com.naveen.stayease.dto.AddHotelRequest;
-import com.naveen.stayease.dto.HotelRoomAvailabilityDTO;
 import com.naveen.stayease.entity.Hotel;
-import com.naveen.stayease.entity.Room;
 import com.naveen.stayease.exception.InvalidInputException;
 import com.naveen.stayease.repository.HotelRepository;
-import com.naveen.stayease.repository.RoomRepository;
-import com.naveen.stayease.util.RoomAvailabilityUtil;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +14,9 @@ import java.util.Optional;
 public class HotelService implements IHotelService{
 
     private final HotelRepository repository;
-    private final RoomRepository roomRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public HotelService(HotelRepository repository, RoomRepository roomRepository) {
-        this.roomRepository= roomRepository;
+    public HotelService(HotelRepository repository) {
         this.repository = repository;
     }
 
