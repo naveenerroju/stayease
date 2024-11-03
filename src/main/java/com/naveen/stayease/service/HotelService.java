@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class HotelService implements IHotelService{
@@ -49,22 +48,4 @@ public class HotelService implements IHotelService{
         return repository.save(hotel);
     }
 
-    @Override
-    public List<HotelRoomAvailabilityDTO> getAvailableRooms(LocalDate searchDate) {
-        List<Room> availableRooms = roomRepository.findAvailableRooms(searchDate);
-        List<HotelRoomAvailabilityDTO> availableRoomDTOs = new ArrayList<>();
-
-        for (Room room : availableRooms) {
-            int availableRoomsCount = RoomAvailabilityUtil.numberOfAvailableRooms(room, searchDate);
-
-            availableRoomDTOs.add(new HotelRoomAvailabilityDTO(
-                    room.getHotel().getId(),
-                    room.getHotel().getName(),
-                    room.getId(),
-                    room.getName(),
-                    availableRoomsCount
-            ));
-        }
-        return availableRoomDTOs;
-    }
 }

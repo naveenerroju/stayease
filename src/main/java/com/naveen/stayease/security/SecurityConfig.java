@@ -1,6 +1,6 @@
 package com.naveen.stayease.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.naveen.stayease.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +11,7 @@ import org.springframework.security.authentication.password.CompromisedPasswordC
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,20 +23,27 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 @Configuration
 public class SecurityConfig {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
     private final int PASSWORD_ENCODING_STRENGTH = 12;
 
+    public SecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
+        this.userDetailsService = userDetailsService;
+        this.jwtFilter = jwtFilter;
+    }
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrfConfig -> csrfConfig.disable()).
+        return http.csrf(AbstractHttpConfigurer::disable).
         authorizeHttpRequests(request -> request
                 .requestMatchers("user/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "hotel/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "room/**").permitAll()
+                .requestMatchers("hotel/**").hasAuthority(Role.MANAGER.name())
+                .requestMatchers("room/**").hasAuthority(Role.MANAGER.name())
+                .requestMatchers("book/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,7 +71,6 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(userDetailsService);
-
 
         return provider;
     }

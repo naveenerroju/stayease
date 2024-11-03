@@ -38,14 +38,5 @@ public class HotelController {
         return hotelService.getHotels(id);
     }
 
-    /**
-     * example url baser_url/available-rooms?date=2024-11-05
-     * @param date 2024-11-05
-     * @return
-     */
-    @GetMapping("/available-rooms")
-    public List<HotelRoomAvailabilityDTO> getAvailableRooms(@RequestParam("date") LocalDate date) {
-        return hotelService.getAvailableRooms(date);
-    }
 
 }
