@@ -7,6 +7,7 @@ import com.naveen.stayease.entity.Room;
 import com.naveen.stayease.exception.InvalidInputException;
 import com.naveen.stayease.repository.HotelRepository;
 import com.naveen.stayease.repository.RoomRepository;
+import com.naveen.stayease.util.RoomAvailabilityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,19 +50,12 @@ public class HotelService implements IHotelService{
     }
 
     @Override
-    public List<Hotel> getAvailableHotels() {
-        return repository.findByAvailability(true);
-    }
-
     public List<HotelRoomAvailabilityDTO> getAvailableRooms(LocalDate searchDate) {
         List<Room> availableRooms = roomRepository.findAvailableRooms(searchDate);
         List<HotelRoomAvailabilityDTO> availableRoomDTOs = new ArrayList<>();
 
         for (Room room : availableRooms) {
-            int bookedCount = (int) room.getBookings().stream()
-                    .filter(booking -> booking.getBookingDate().equals(searchDate))
-                    .count();
-            int availableRoomsCount = room.getTotalNumberOfRooms() - bookedCount;
+            int availableRoomsCount = RoomAvailabilityUtil.numberOfAvailableRooms(room, searchDate);
 
             availableRoomDTOs.add(new HotelRoomAvailabilityDTO(
                     room.getHotel().getId(),

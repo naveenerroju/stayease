@@ -12,5 +12,5 @@ public interface IHotelService {
     List<Hotel> getHotels();
     Hotel getHotels(long id);
     Hotel addHotel(AddHotelRequest hotel);
-    List<Hotel> getAvailableHotels();
+    List<HotelRoomAvailabilityDTO> getAvailableRooms(LocalDate searchDate);
 }
