@@ -2,15 +2,12 @@ package com.naveen.stayease.controller;
 
 import com.naveen.stayease.dto.BookingDetails;
 import com.naveen.stayease.dto.BookingRequest;
-import com.naveen.stayease.entity.Booking;
 import com.naveen.stayease.entity.User;
 import com.naveen.stayease.service.BookingService;
 import com.naveen.stayease.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
