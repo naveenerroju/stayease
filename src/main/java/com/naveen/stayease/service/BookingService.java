@@ -10,6 +10,7 @@ import com.naveen.stayease.exception.ValidationException;
 import com.naveen.stayease.repository.BookingRepository;
 import com.naveen.stayease.repository.RoomRepository;
 import com.naveen.stayease.repository.UserRepository;
+import com.naveen.stayease.util.RoomAvailabilityUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,10 @@ public class BookingService implements IBookingService{
         if(bookingRequest.getBookingDate().isBefore(LocalDate.now())){
             throw new InvalidInputException("Booking date is not valid.");
         }
-
+        //check if the room is available on requested date
+        if(RoomAvailabilityUtil.numberOfAvailableRooms(room.get(), bookingRequest.getBookingDate())<1){
+            throw new InvalidInputException("The requested room is not available on the requested date. Please choose any available rooms.");
+        }
         Booking booking = new Booking();
         booking.setRoom(room.get());
         booking.setUser(user);

@@ -25,8 +25,6 @@ public class Hotel {
 
     private String description;
 
-    private boolean availability;
-
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Room> rooms;
