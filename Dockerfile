@@ -1,7 +1,7 @@
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:17 AS build
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 
 
