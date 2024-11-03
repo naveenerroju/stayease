@@ -2,6 +2,7 @@ package com.naveen.stayease.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.password.CompromisedPasswordException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,6 +45,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Error> handleValidationException(ValidationException ex){
         return ResponseEntity.badRequest().body(new Error("VALIDATION_EXCEPTION",ex.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Error> handleBadCredentials(BadCredentialsException ex){
+        return ResponseEntity.badRequest().body(new Error("BAD_CREDENTIALS",ex.getMessage()));
     }
 
 }
