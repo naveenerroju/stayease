@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as a parent image
-FROM maven:openjdk:17-jdk-alpine AS build
+FROM openjdk:17 AS build
 COPY . .
 RUN mvn clean package
 
