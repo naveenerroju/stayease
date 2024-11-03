@@ -11,7 +11,6 @@ import com.naveen.stayease.exception.ValidationException;
 import com.naveen.stayease.repository.BookingRepository;
 import com.naveen.stayease.repository.RoomRepository;
 import com.naveen.stayease.repository.UserRepository;
-import com.naveen.stayease.util.RoomAvailabilityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class BookingServiceTest {
+class BookingServiceTest {
 
     @Mock
     private BookingRepository bookingRepository;
@@ -46,7 +45,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testBookRoom_Success() {
+    void testBookRoom_Success() {
         User user = new User();
         Room room = new Room();
         room.setId(1L);
@@ -67,7 +66,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testBookRoom_RoomNotFound() {
+    void testBookRoom_RoomNotFound() {
         BookingRequest bookingRequest = new BookingRequest(1L, LocalDate.now().plusDays(1));
 
         when(roomRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -80,7 +79,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testBookRoom_InvalidBookingDate() {
+    void testBookRoom_InvalidBookingDate() {
         BookingRequest bookingRequest = new BookingRequest(1L, LocalDate.now().minusDays(1));
 
         InvalidInputException exception = assertThrows(InvalidInputException.class, () -> {
@@ -91,7 +90,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testBookRoom_RoomNotAvailable() {
+    void testBookRoom_RoomNotAvailable() {
         Room room = new Room();
         room.setId(1L);
         room.setBookings(new ArrayList<>());
@@ -107,7 +106,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testGetAllBookings_Success() {
+    void testGetAllBookings_Success() {
         User user = new User();
         Booking booking = new Booking();
         booking.setBookingId(UUID.randomUUID());
@@ -128,7 +127,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testGetAllBookings_NoBookings() {
+    void testGetAllBookings_NoBookings() {
         User user = new User();
         user.setBookings(Collections.emptyList());
 
@@ -140,7 +139,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testCancelBooking_Success() {
+    void testCancelBooking_Success() {
         User user = new User();
         user.setEmail("test@example.com");
         Booking booking = new Booking();
@@ -156,7 +155,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testCancelBooking_BookingNotFound() {
+    void testCancelBooking_BookingNotFound() {
         when(bookingRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         InvalidInputException exception = assertThrows(InvalidInputException.class, () -> {
@@ -167,7 +166,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void testCancelBooking_BookingFulfilled() {
+    void testCancelBooking_BookingFulfilled() {
         User user = new User();
         user.setEmail("test@example.com");
         Booking booking = new Booking();

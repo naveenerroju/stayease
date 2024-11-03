@@ -20,11 +20,14 @@ import java.util.Optional;
 @Service
 public class HotelService implements IHotelService{
 
-    @Autowired
-    private HotelRepository repository;
-    @Autowired
-    private RoomRepository roomRepository;
+    private final HotelRepository repository;
+    private final RoomRepository roomRepository;
     private final ModelMapper modelMapper = new ModelMapper();
+
+    public HotelService(HotelRepository repository, RoomRepository roomRepository) {
+        this.roomRepository= roomRepository;
+        this.repository = repository;
+    }
 
     @Override
     public List<Hotel> getHotels() {
