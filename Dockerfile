@@ -5,7 +5,7 @@ RUN mvn clean package
 
 
 
-FROM openjdk:17.0.1-jdk-slim
+FROM openjdk:17
 
 # Copy the Maven build output (your jar file) into the container at /app
 COPY --from=build /target/stayease-0.0.1-SNAPSHOT.jar stayease.jar
