@@ -12,7 +12,6 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisterResponse {
 
-    private Long id;
     private String firstname;
     private String lastname;
     private String email;

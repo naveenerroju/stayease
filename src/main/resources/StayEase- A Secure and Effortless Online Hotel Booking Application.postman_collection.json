@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "1486f828-ccf9-4b75-a755-f989e659c8ba",
 		"name": "StayEase: A Secure and Effortless Online Hotel Booking Application",
-		"description": "# API Documentation\n\n## User Registration\n\n- **URL**: `{{base_url}}/user/register`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"firstname\": \"Naveen\",\n          \"email\": \"naveen@gmail.com\",\n          \"password\": \"naveenerroju@1997\"\n      }\n    \n     ```\n    \n    - If you do not provide a role, you are assigned the user role by default.\n        \n    - To register as a manager, provide the role as `MANAGER`.\n        \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"firstname\": \"Naveen\",\n          \"email\": \"naveen@gmail.com\",\n          \"role\": \"USER\"\n      }\n    \n     ```\n    \n- **Note**: User email address will be saved to collection variables.\n    \n\n## Login\n\n- **URL**: `{{base_path}}/user/login`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"email\": \"{{user_email}}\",\n          \"password\": \"naveenerroju@1997\"\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXZlZW5AZ21haWwuY29tIiwiaWF0IjoxNzMwNjI4MzIyLCJleHAiOjE3MzA2MzkxMjJ9.Q2qTLsItHN1aXS-fQZL46U8NvBzWCTgnkSlizDo9ElI\"\n      }\n    \n     ```\n    \n    - This token will be valid for 3 hours (check `application.properties` for the updated time limit).\n        \n    - Both users and managers can log in here.\n        \n    - The token will be saved to collection variables.\n        \n\n## Adding Hotels\n\n- **URL**: `{{base_path}}/hotel`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"name\": \"Grand Hotel\",\n          \"location\": [40.712776, -74.005974],\n          \"description\": \"A luxurious hotel located in the heart of the city.\",\n          \"availability\": true\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"name\": \"Grand Hotel\",\n          \"location\": [40.712776, -74.005974],\n          \"description\": \"A luxurious hotel located in the heart of the city.\",\n          \"rooms\": null\n      }\n    \n     ```\n    \n\n## Adding Rooms\n\n- **URL**: `{{base_url}}/room`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"name\": \"Deluxe Room\",\n          \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n          \"hotel\": {{hotel_id}},\n          \"totalNumberOfRooms\": 5\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"name\": \"Deluxe Room\",\n          \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n          \"totalNumberOfRooms\": 5,\n          \"bookings\": null\n      }\n    \n     ```\n    \n\n## Getting Available Rooms\n\n- **URL**: `{{base_path}}/room/available-rooms?date=2025-01-27`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    \n    ``` json\n      [\n          {\n              \"hotelId\": 1,\n              \"hotelName\": \"Grand Hotel\",\n              \"roomId\": 1,\n              \"roomName\": \"Deluxe Room\",\n              \"availableRooms\": 5\n          }\n      ]\n    \n     ```\n    \n\n## Booking a Room\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"roomId\": {{room_1_id}},\n          \"bookingDate\": \"{{tomorrowDate}}\"\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\",\n          \"hotelId\": 1,\n          \"hotelName\": \"Grand Hotel\",\n          \"roomId\": 1,\n          \"roomName\": \"Deluxe Room\",\n          \"bookingDate\": \"2024-11-04\"\n      }\n    \n     ```\n    \n    - Booking ID is a UUID.\n        \n    - Variables for hotel ID and room ID will be saved after successful POST requests.\n        \n\n## Checking Bookings\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    - **Success**:\n        \n        ``` json\n          [\n              {\n                  \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\",\n                  \"hotelId\": 1,\n                  \"hotelName\": \"Grand Hotel\",\n                  \"roomId\": 1,\n                  \"roomName\": \"Deluxe Room\",\n                  \"bookingDate\": \"2024-11-04\"\n              }\n          ]\n        \n         ```\n        \n    - **Failure**:\n        \n        ``` json\n          {\n              \"code\": \"VALIDATION_EXCEPTION\",\n              \"description\": \"You do not have any bookings yet\"\n          }\n        \n         ```",
+		"description": "# API Documentation\n\n## User Registration\n\n- **URL**: `{{base_url}}/user/register`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n        {\n            \"firstname\": \"Naveen\",\n            \"email\": \"naveen@gmail.com\",\n            \"password\": \"naveenerroju@1997\"\n        }\n    \n     ```\n    \n    - If you do not provide a role, you are assigned the user role by default.\n        \n    - To register as a manager, provide the role as `MANAGER`.\n        \n- **Expected Response**:\n    \n    ``` json\n        {\n            \"id\": 1,\n            \"firstname\": \"Naveen\",\n            \"email\": \"naveen@gmail.com\",\n            \"role\": \"USER\"\n        }\n    \n     ```\n    \n- **Note**: User email address will be saved to collection variables.\n    \n\n## Login\n\n- **URL**: `{{base_path}}/user/login`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n        {\n            \"email\": \"{{user_email}}\",\n            \"password\": \"naveenerroju@1997\"\n        }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n        {\n            \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXZlZW5AZ21haWwuY29tIiwiaWF0IjoxNzMwNjI4MzIyLCJleHAiOjE3MzA2MzkxMjJ9.Q2qTLsItHN1aXS-fQZL46U8NvBzWCTgnkSlizDo9ElI\"\n        }\n    \n     ```\n    \n    - This token will be valid for 3 hours (check `application.properties` for the updated time limit).\n        \n    - Both users and managers can log in here.\n        \n    - The token will be saved to collection variables.\n        \n\n## Adding Hotels\n\n- **URL**: `{{base_path}}/hotel`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n        {\n            \"name\": \"Grand Hotel\",\n            \"location\": [40.712776, -74.005974],\n            \"description\": \"A luxurious hotel located in the heart of the city.\",\n            \"availability\": true\n        }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n        {\n            \"id\": 1,\n            \"name\": \"Grand Hotel\",\n            \"location\": [40.712776, -74.005974],\n            \"description\": \"A luxurious hotel located in the heart of the city.\",\n            \"rooms\": null\n        }\n    \n     ```\n    \n\n## Adding Rooms\n\n- **URL**: `{{base_url}}/room`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n        {\n            \"name\": \"Deluxe Room\",\n            \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n            \"hotel\": {{hotel_id}},\n            \"totalNumberOfRooms\": 5\n        }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n        {\n            \"id\": 1,\n            \"name\": \"Deluxe Room\",\n            \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n            \"totalNumberOfRooms\": 5,\n            \"bookings\": null\n        }\n    \n     ```\n    \n\n## Getting Available Rooms\n\n- **URL**: `{{base_path}}/room/available-rooms?date=2025-01-27`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    \n    ``` json\n        [\n            {\n                \"hotelId\": 1,\n                \"hotelName\": \"Grand Hotel\",\n                \"roomId\": 1,\n                \"roomName\": \"Deluxe Room\",\n                \"availableRooms\": 5\n            }\n        ]\n    \n     ```\n    \n\n## Booking a Room\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n        {\n            \"roomId\": {{room_1_id}},\n            \"bookingDate\": \"{{tomorrowDate}}\"\n        }\n    \n     ```\n    \n- { \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\", \"hotelId\": 1, \"hotelName\": \"Grand Hotel\", \"roomId\": 1, \"roomName\": \"Deluxe Room\", \"bookingDate\": \"2024-11-04\" }\n    \n    - Booking ID is a UUID.\n        \n    - Variables for hotel ID and room ID will be saved after successful POST requests.\n        \n\n## Cancel a booking\n\nyou can cancel a booking if it is not fulfilled. If the booked date is already past, we get the validation error.\n\nHowever, if it is still in future, we can cancel the booking by doing a delete API.\n\n- **URL**: `{{base_path}}/book/{{booking_id}}`\n    \n- **Method**: DELETE\n    \n- On successfull deletion, we get 204 no content response.\n    \n\n## Checking Bookings\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    \n    - **Success**:\n        \n        ``` json\n            [\n                {\n                    \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\",\n                    \"hotelId\": 1,\n                    \"hotelName\": \"Grand Hotel\",\n                    \"roomId\": 1,\n                    \"roomName\": \"Deluxe Room\",\n                    \"bookingDate\": \"2024-11-04\"\n                }\n            ]\n        \n         ```\n        \n    - **Failure**:\n        \n        ``` json\n            {\n                \"code\": \"VALIDATION_EXCEPTION\",\n                \"description\": \"You do not have any bookings yet\"\n            }\n        \n         ```",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "21585631"
 	},
@@ -616,6 +616,24 @@
 								"type": "text/javascript",
 								"packages": {}
 							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set booking data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"booking_id\",jsonData.bookingId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
 					],
 					"request": {
@@ -674,6 +692,46 @@
 							],
 							"path": [
 								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/book/{{booking_id}}",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"book",
+								"{{booking_id}}"
 							]
 						}
 					},
@@ -761,6 +819,10 @@
 		},
 		{
 			"key": "room_1_name",
+			"value": ""
+		},
+		{
+			"key": "booking_id",
 			"value": ""
 		}
 	]
