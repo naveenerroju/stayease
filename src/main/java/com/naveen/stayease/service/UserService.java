@@ -4,6 +4,7 @@ import com.naveen.stayease.dto.LoginRequest;
 import com.naveen.stayease.dto.RegisterRequest;
 import com.naveen.stayease.dto.RegisterResponse;
 import com.naveen.stayease.entity.User;
+import com.naveen.stayease.exception.InvalidInputException;
 import com.naveen.stayease.model.Role;
 import com.naveen.stayease.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -49,6 +50,9 @@ public class UserService implements IUserService {
      * @return response
      */
     public RegisterResponse register(RegisterRequest registerRequest){
+        if(repository.findByEmail(registerRequest.getEmail()).isPresent()){
+            throw new InvalidInputException("User with provided email already exists");
+        }
         //check if password is compromised and encrypt it
         isPasswordCompromised(registerRequest.getPassword());
         registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));

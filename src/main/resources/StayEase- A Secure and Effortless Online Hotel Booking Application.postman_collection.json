@@ -1,0 +1,767 @@
+{
+	"info": {
+		"_postman_id": "1486f828-ccf9-4b75-a755-f989e659c8ba",
+		"name": "StayEase: A Secure and Effortless Online Hotel Booking Application",
+		"description": "# API Documentation\n\n## User Registration\n\n- **URL**: `{{base_url}}/user/register`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"firstname\": \"Naveen\",\n          \"email\": \"naveen@gmail.com\",\n          \"password\": \"naveenerroju@1997\"\n      }\n    \n     ```\n    \n    - If you do not provide a role, you are assigned the user role by default.\n        \n    - To register as a manager, provide the role as `MANAGER`.\n        \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"firstname\": \"Naveen\",\n          \"email\": \"naveen@gmail.com\",\n          \"role\": \"USER\"\n      }\n    \n     ```\n    \n- **Note**: User email address will be saved to collection variables.\n    \n\n## Login\n\n- **URL**: `{{base_path}}/user/login`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"email\": \"{{user_email}}\",\n          \"password\": \"naveenerroju@1997\"\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXZlZW5AZ21haWwuY29tIiwiaWF0IjoxNzMwNjI4MzIyLCJleHAiOjE3MzA2MzkxMjJ9.Q2qTLsItHN1aXS-fQZL46U8NvBzWCTgnkSlizDo9ElI\"\n      }\n    \n     ```\n    \n    - This token will be valid for 3 hours (check `application.properties` for the updated time limit).\n        \n    - Both users and managers can log in here.\n        \n    - The token will be saved to collection variables.\n        \n\n## Adding Hotels\n\n- **URL**: `{{base_path}}/hotel`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"name\": \"Grand Hotel\",\n          \"location\": [40.712776, -74.005974],\n          \"description\": \"A luxurious hotel located in the heart of the city.\",\n          \"availability\": true\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"name\": \"Grand Hotel\",\n          \"location\": [40.712776, -74.005974],\n          \"description\": \"A luxurious hotel located in the heart of the city.\",\n          \"rooms\": null\n      }\n    \n     ```\n    \n\n## Adding Rooms\n\n- **URL**: `{{base_url}}/room`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"name\": \"Deluxe Room\",\n          \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n          \"hotel\": {{hotel_id}},\n          \"totalNumberOfRooms\": 5\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"id\": 1,\n          \"name\": \"Deluxe Room\",\n          \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\n          \"totalNumberOfRooms\": 5,\n          \"bookings\": null\n      }\n    \n     ```\n    \n\n## Getting Available Rooms\n\n- **URL**: `{{base_path}}/room/available-rooms?date=2025-01-27`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    \n    ``` json\n      [\n          {\n              \"hotelId\": 1,\n              \"hotelName\": \"Grand Hotel\",\n              \"roomId\": 1,\n              \"roomName\": \"Deluxe Room\",\n              \"availableRooms\": 5\n          }\n      ]\n    \n     ```\n    \n\n## Booking a Room\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: POST\n    \n- **Request Body**:\n    \n    ``` json\n      {\n          \"roomId\": {{room_1_id}},\n          \"bookingDate\": \"{{tomorrowDate}}\"\n      }\n    \n     ```\n    \n- **Expected Response**:\n    \n    ``` json\n      {\n          \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\",\n          \"hotelId\": 1,\n          \"hotelName\": \"Grand Hotel\",\n          \"roomId\": 1,\n          \"roomName\": \"Deluxe Room\",\n          \"bookingDate\": \"2024-11-04\"\n      }\n    \n     ```\n    \n    - Booking ID is a UUID.\n        \n    - Variables for hotel ID and room ID will be saved after successful POST requests.\n        \n\n## Checking Bookings\n\n- **URL**: `{{base_path}}/book`\n    \n- **Method**: GET\n    \n- **Expected Response**:\n    - **Success**:\n        \n        ``` json\n          [\n              {\n                  \"bookingId\": \"b6c9e587-d73c-4a88-a817-2ca62653d2fd\",\n                  \"hotelId\": 1,\n                  \"hotelName\": \"Grand Hotel\",\n                  \"roomId\": 1,\n                  \"roomName\": \"Deluxe Room\",\n                  \"bookingDate\": \"2024-11-04\"\n              }\n          ]\n        \n         ```\n        \n    - **Failure**:\n        \n        ``` json\n          {\n              \"code\": \"VALIDATION_EXCEPTION\",\n              \"description\": \"You do not have any bookings yet\"\n          }\n        \n         ```",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21585631"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "user register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"pm.test(\"Set login data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.collectionVariables.set(\"user_email\",jsonData.email);",
+									"});",
+									"",
+									"pm.test(\"Set password\", function(){",
+									"    var requestBody = pm.request.json();",
+									"    var password = requestBody.password;",
+									"",
+									"    // Save the password to an environment variable",
+									"    pm.collectionVariables.set(\"user_password\", password);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstname\": \"Naveen\",\n    \"email\": \"naveen@gmail.com\",\n    \"password\": \"naveenerroju@1997\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"register"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "user login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful login\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set manager auth token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"user_auth_token\",jsonData.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{user_email}}\",\r\n    \"password\": \"naveenerroju@1997\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/user/login",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "manager",
+			"item": [
+				{
+					"name": "manager register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"pm.test(\"Set login data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.collectionVariables.set(\"manager_email\",jsonData.email);",
+									"});",
+									"",
+									"pm.test(\"Set password\", function(){",
+									"    var requestBody = pm.request.json();",
+									"    var password = requestBody.password;",
+									"",
+									"    // Save the password to an environment variable",
+									"    pm.collectionVariables.set(\"manager_password\", password);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstname\": \"Krishna\",\n    \"email\": \"krishna@gmail.com\",\n    \"role\": \"MANAGER\",\n    \"password\": \"srikrishna@1997\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"register"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "manager login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful login\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set manager auth token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"manager_auth_token\",jsonData.token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{manager_email}}\",\r\n    \"password\": \"srikrishna@1997\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/user/login",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "hotel",
+			"item": [
+				{
+					"name": "add hotel 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Hotel added\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"hotel data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"hotel_id\",jsonData.id);\r",
+									"    pm.collectionVariables.set(\"hotel_name\",jsonData.name);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{manager_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Grand Hotel\",\r\n    \"location\": [40.712776, -74.005974],\r\n    \"description\": \"A luxurious hotel located in the heart of the city.\",\r\n    \"availability\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/hotel",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add hotel 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Hotel added\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"hotel 2 data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"hotel_2_id\",jsonData.id);\r",
+									"    pm.collectionVariables.set(\"hotel_2_name\",jsonData.name);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{manager_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Kothapatnam\",\r\n    \"location\": [46.712776, -64.005974],\r\n    \"description\": \"A luxurious hotel located in the heart of the city.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/hotel",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all hotels",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/hotel",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "room",
+			"item": [
+				{
+					"name": "add deluxe room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Room added\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"room data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"room_1_id\",jsonData.id);\r",
+									"    pm.collectionVariables.set(\"room_1_name\",jsonData.name);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{manager_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Deluxe Room\",\r\n    \"description\": \"A spacious room with a king-sized bed and a beautiful view.\",\r\n    \"hotel\": {{hotel_id}},\r\n    \"totalNumberOfRooms\": 5\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/room",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add suite room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Room added\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"room data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.collectionVariables.set(\"room_2_id\",jsonData.id);\r",
+									"    pm.collectionVariables.set(\"room_2_name\",jsonData.name);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{manager_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Suite Room\",\r\n    \"description\": \"A luxurious suite with a separate living area, a king-sized bed, and premium amenities.\",\r\n    \"hotel\": {{hotel_id}},\r\n    \"totalNumberOfRooms\": 3\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/room",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add plaza room for hotel 2",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{manager_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Plaza Room\",\r\n    \"description\": \"A luxurious suite with a separate living area, a king-sized bed, and premium amenities.\",\r\n    \"hotel\": {{hotel_2_id}},\r\n    \"totalNumberOfRooms\": 10\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/room",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all rooms",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXZlZW5AZ21haWwuY29tIiwiaWF0IjoxNzMwNTYxNTY2LCJleHAiOjE3MzA1NzIzNjZ9.sOEvMW5HvBp3YMsqwpqBkDQiafn-ifDw9W2GvbcuUv8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/room",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get available rooms for booking",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/room/available-rooms?date=2025-01-27",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"room",
+								"available-rooms"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-01-27"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "booking",
+			"item": [
+				{
+					"name": "book a room",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Calculate tomorrow's date\r",
+									"var today = new Date();\r",
+									"var tomorrow = new Date(today);\r",
+									"tomorrow.setDate(today.getDate() + 1);\r",
+									"\r",
+									"// Format the date as YYYY-MM-DD\r",
+									"var dd = String(tomorrow.getDate()).padStart(2, '0');\r",
+									"var mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // January is 0!\r",
+									"var yyyy = tomorrow.getFullYear();\r",
+									"\r",
+									"var formattedDate = yyyy + '-' + mm + '-' + dd;\r",
+									"\r",
+									"// Set the formatted date as an environment variable\r",
+									"pm.environment.set(\"tomorrowDate\", formattedDate);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roomId\": {{room_1_id}},\r\n  \"bookingDate\": \"{{tomorrowDate}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_path}}/book",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all my bookings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/book",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"book"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		},
+		{
+			"key": "user_email",
+			"value": ""
+		},
+		{
+			"key": "user_password",
+			"value": ""
+		},
+		{
+			"key": "user_auth_token",
+			"value": ""
+		},
+		{
+			"key": "manager_email",
+			"value": ""
+		},
+		{
+			"key": "manager_auth_token",
+			"value": ""
+		},
+		{
+			"key": "hotel_id",
+			"value": ""
+		},
+		{
+			"key": "hotel_name",
+			"value": ""
+		},
+		{
+			"key": "hotel_2_id",
+			"value": ""
+		},
+		{
+			"key": "hotel_2_name",
+			"value": ""
+		},
+		{
+			"key": "room_1_id",
+			"value": ""
+		},
+		{
+			"key": "room_2_name",
+			"value": ""
+		},
+		{
+			"key": "room_2_id",
+			"value": ""
+		},
+		{
+			"key": "room_1_name",
+			"value": ""
+		}
+	]
+}
