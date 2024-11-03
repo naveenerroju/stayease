@@ -66,7 +66,6 @@ class UserServiceTest {
         RegisterResponse registerResponse = userService.register(registerRequest);
 
         assertNotNull(registerResponse);
-        assertEquals(1L, registerResponse.getId());
         assertEquals("john.doe@example.com", registerResponse.getEmail());
         verify(userRepository, times(1)).save(any(User.class));
     }

@@ -37,7 +37,7 @@ class UserControllerTest {
 
     @Test
     void testRegister() throws Exception {
-        RegisterResponse registerResponse = new RegisterResponse(1L, "John", "Doe", "john.doe@example.com", Role.USER);
+        RegisterResponse registerResponse = new RegisterResponse("John", "Doe", "john.doe@example.com", Role.USER);
 
         when(userService.register(any(RegisterRequest.class))).thenReturn(registerResponse);
 
@@ -46,7 +46,6 @@ class UserControllerTest {
                         .content("{\"firstname\":\"John\",\"lastname\":\"Doe\",\"email\":\"john.doe@example.com\",\"password\":\"password123\",\"role\":\"USER\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.firstname").value("John"))
                 .andExpect(jsonPath("$.lastname").value("Doe"))
                 .andExpect(jsonPath("$.email").value("john.doe@example.com"))
