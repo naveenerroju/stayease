@@ -72,7 +72,6 @@ public class SecurityConfig {
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(userDetailsService);
 
-
         return provider;
     }
 
